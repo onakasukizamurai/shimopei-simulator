@@ -5,10 +5,9 @@
 const NAME = "しもへい。";
 const AVATAR = "assets/shimohei.png";
 const MEMBERS = 9;                // グループの人数（自分を含む）
-const IDLE_SUB = `メンバー${MEMBERS}人`;
 const START_MIN = 23 * 60 + 47;   // 土曜 23:47
 const WAKE_MIN = 5 * 60 + 30;     // 朝練6時集合 − 準備30分
-const NAG_DELAY = 15000;
+const NAG_DELAY = 26000;
 
 const $ = (id) => document.getElementById(id);
 const chat = $("chat"), quick = $("quick"), input = $("input");
@@ -144,45 +143,33 @@ function markRead() {
 
 function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
-async function showTyping(ms) {
-  $("hdrSub").textContent = NAME + "が入力中…";
-  $("hdrSub").classList.add("typing");
-  const row = document.createElement("div");
-  row.className = "row in typing";
-  row.innerHTML = `<img class="av" alt=""><div class="stack"><div class="bub"><i></i><i></i><i></i></div></div>`;
-  row.querySelector(".av").src = AVATAR;
-  chat.appendChild(row);
-  scroll();
-  await wait(ms);
-  row.remove();
-  $("hdrSub").textContent = IDLE_SUB;
-  $("hdrSub").classList.remove("typing");
-}
+/* LINEに入力中表示は無いので、読む間だけ空ける */
+function readPause(len) { return wait(Math.min(3000, 1000 + len * 65)); }
 
 /* しもへい。の連投 */
 async function botSay(msgs) {
   markRead();
   for (const m of msgs) {
     if (typeof m === "string") {
-      await showTyping(Math.min(1500, 420 + m.length * 32));
+      await readPause(m.length);
       tick(1);
       addRow("in", { text: m });
       S.botMsgs++;
     } else if (m.s) {
-      await showTyping(420);
+      await wait(1200);
       tick(1);
       addRow("in", { sticker: m.s });
       S.botMsgs++;
     } else if (m.photo) {
-      await showTyping(900);
+      await wait(1600);
       tick(1);
       addRow("in", { photo: m.photo });
       S.botMsgs++;
     } else if (m.sys) {
-      await wait(500);
+      await wait(900);
       addSys(m.sys);
     }
-    await wait(170);
+    await wait(450);
   }
 }
 
@@ -247,7 +234,7 @@ async function doNag() {
   S.busy = false;
   if (checkOver()) return;
   if (nag.forceCall) { incomingCall(); return; }
-  S.nagTimer = setTimeout(doNag, Math.max(9000, NAG_DELAY - S.nagLevel * 1200));
+  S.nagTimer = setTimeout(doNag, Math.max(15000, NAG_DELAY - S.nagLevel * 2000));
 }
 
 /* ---------- 自由入力の判定 ---------- */
@@ -291,7 +278,7 @@ async function answer(choice) {
   tick(2);
   paintHud();
 
-  await wait(420);
+  await wait(900);
   await botSay(choice.reply || pick(DATA.typeReply[choice.type]));
   S.busy = false;
 
@@ -307,7 +294,7 @@ async function nextPhase() {
   S.busy = true;
   const phase = DATA.phases[S.phase];
   const card = pick(phase.cards);
-  await wait(600);
+  await wait(1200);
   await botSay(card.msgs);
   S.busy = false;
   if (checkOver()) return;
@@ -427,7 +414,7 @@ function begin() {
   $("copyMsg").textContent = "";
   paintHud();
   addDayPill("今日");
-  addSys("しもへい。がノート「反省文_v12」を開きました");
+  addSys("しもへい。がノート「学習院戦_戦術_v12」を開きました");
   setInputEnabled(false);
   nextPhase();
 }
