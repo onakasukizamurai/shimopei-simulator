@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>しもぺいシミュレーター｜ホッケー部監督の詰めLINE体験</title>
+<meta name="description" content="土曜23:47、練習試合は2-5で敗戦。明朝6時集合。ホッケー部監督「しもへい。」の既読が、ついた。返信を選ぶか自由に打って、朝まで生き延びろ。">
+<meta name="theme-color" content="#06C755">
+<meta property="og:type" content="website">
+<meta property="og:title" content="しもぺいシミュレーター">
+<meta property="og:description" content="ホッケー部監督の深夜LINEを生き延びろ。メンタルが尽きたら寝落ち、信頼が尽きたら戦力外。">
+<meta property="og:image" content="assets/shimohei.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%2306C755'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle'%3E%F0%9F%8F%92%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+
+<div class="stage">
+  <div class="phone" id="phone">
+
+    <div class="statusbar">
+      <span class="sb-time" id="sbTime">23:47</span>
+      <span class="sb-notch"></span>
+      <span class="sb-right">
+        <svg viewBox="0 0 18 12" class="sb-ic"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+        <svg viewBox="0 0 26 13" class="sb-ic"><rect x="0.6" y="0.6" width="21" height="11.8" rx="3" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="2.2" y="2.2" width="13" height="8.6" rx="1.6"/><path d="M23.4 4.3v4.4a2.6 2.6 0 0 0 0-4.4z"/></svg>
+      </span>
+    </div>
+
+    <header class="chat-header">
+      <button class="hdr-btn" id="btnBack" aria-label="戻る">
+        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <img class="hdr-av" src="assets/shimohei.png" alt="しもへい。">
+      <div class="hdr-name">
+        <strong>しもへい。</strong>
+        <small id="hdrSub">オンライン</small>
+      </div>
+      <button class="hdr-btn" aria-label="無料通話">
+        <svg viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6l1.5-2 4 1.5v3c0 1-.8 1.8-1.8 1.7C11.6 19.4 4.6 12.4 3.8 5.3 3.7 4.3 4.5 3.5 5.5 3.5z" fill="currentColor"/></svg>
+      </button>
+      <button class="hdr-btn" aria-label="メニュー">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <div class="hud" id="hud">
+      <div class="hud-item">
+        <span class="hud-lbl">メンタル</span>
+        <span class="hud-bar"><i id="barMental" style="width:100%"></i></span>
+        <span class="hud-val" id="valMental">100</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-lbl">信頼</span>
+        <span class="hud-bar trust"><i id="barTrust" style="width:50%"></i></span>
+        <span class="hud-val" id="valTrust">50</span>
+      </div>
+      <div class="hud-item sleep">
+        <span class="hud-lbl">寝られる時間</span>
+        <span class="hud-val big" id="valSleep">5:43</span>
+      </div>
+    </div>
+
+    <main class="chat" id="chat" aria-live="polite"></main>
+
+    <div class="quick" id="quick" hidden></div>
+
+    <footer class="composer">
+      <button class="cp-btn" aria-label="追加">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="cp-field">
+        <input id="input" type="text" placeholder="Aa" autocomplete="off" maxlength="140" enterkeyhint="send">
+        <button class="cp-emoji" aria-label="絵文字">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="15" cy="10" r="1.2" fill="currentColor"/><path d="M8.5 14.5c1.8 1.8 5.2 1.8 7 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <button class="cp-send" id="btnSend" aria-label="送信">
+        <svg viewBox="0 0 24 24"><path d="M3.4 20.6 21 12 3.4 3.4 3.4 10l12 2-12 2z" fill="currentColor"/></svg>
+      </button>
+    </footer>
+  </div>
+</div>
+
+<!-- 着信オーバーレイ -->
+<div class="call" id="call" hidden>
+  <div class="call-inner">
+    <p class="call-kind">LINE 無料通話</p>
+    <img class="call-av" src="assets/shimohei.png" alt="">
+    <h2>しもへい。</h2>
+    <p class="call-state" id="callState">着信中…</p>
+    <div class="call-acts">
+      <button class="call-btn decline" id="callDecline"><span>✕</span>拒否</button>
+      <button class="call-btn accept" id="callAccept"><span>✆</span>応答</button>
+    </div>
+    <p class="call-note">※ 出たら終わりだと思った方がいい</p>
+  </div>
+</div>
+
+<!-- スタート -->
+<div class="sheet" id="start">
+  <div class="sheet-card">
+    <div class="title-badge">🏒 LINE 風シミュレーター</div>
+    <h1>しもぺい<br>シミュレーター</h1>
+    <p class="lead">
+      土曜 <b>23:47</b>。練習試合は <b>2-5</b> で敗戦。<br>
+      明日は <b>朝6時集合</b>。提出した反省文は、まだ <b>v12</b>。<br>
+      ホッケー部監督「<b>しもへい。</b>」の<b>既読が、ついた。</b>
+    </p>
+    <ul class="rules">
+      <li><b>返信候補を選ぶ</b>か、<b>自由に打って</b>返す</li>
+      <li>返信が遅いと<b>催促</b>が飛んでくる</li>
+      <li><b>メンタル</b>が尽きたら寝落ち、<b>信頼</b>が尽きたら戦力外</li>
+      <li>詰めの内容は<b>毎回変わる</b></li>
+    </ul>
+    <button class="primary" id="btnStart">トークを開く</button>
+    <p class="disclaimer">フィクションです。登場する人物・団体・大会はすべて架空。<br>現実でやったら普通にパワハラです。</p>
+  </div>
+</div>
+
+<!-- 結果 -->
+<div class="sheet" id="end" hidden>
+  <div class="sheet-card result">
+    <div class="res-badge" id="resRank">B</div>
+    <h2 id="resTitle">タイトル</h2>
+    <p class="res-sub" id="resSub">サブ</p>
+    <div class="res-stats">
+      <div><span>メンタル</span><b id="resMental">-</b></div>
+      <div><span>信頼</span><b id="resTrust">-</b></div>
+      <div><span>耐えた時間</span><b id="resTime">-</b></div>
+      <div><span>被弾メッセージ</span><b id="resMsgs">-</b></div>
+    </div>
+    <p class="res-type">あなたの返信スタイル：<b id="resType">-</b></p>
+    <div class="res-acts">
+      <button class="primary" id="btnRetry">もう一度詰められる</button>
+      <button class="ghost" id="btnShareLine">LINEで部活に共有</button>
+      <button class="ghost" id="btnShareX">Xでポスト</button>
+      <button class="ghost" id="btnCopy">リンクをコピー</button>
+    </div>
+    <p class="disclaimer" id="copyMsg"></p>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="data.js?v=3"></script>
+<script src="app.js?v=3"></script>
+</body>
+</html>
