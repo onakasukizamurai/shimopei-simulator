@@ -414,7 +414,6 @@ function begin() {
   $("copyMsg").textContent = "";
   paintHud();
   addDayPill("今日");
-  addSys("しもへい。がノート「学習院戦_戦術_v12」を開きました");
   setInputEnabled(false);
   nextPhase();
 }
