@@ -58,11 +58,15 @@ function paintHud() {
 /* ---------- 描画 ---------- */
 function scroll() { chat.scrollTop = chat.scrollHeight; }
 
-function addSys(text) {
+function sysEl(text) {
   const d = document.createElement("div");
   d.className = "sys";
   d.textContent = text;
-  chat.appendChild(d);
+  return d;
+}
+
+function addSys(text) {
+  chat.appendChild(sysEl(text));
   S.lastSide = null;
   scroll();
 }
@@ -110,6 +114,17 @@ function addRow(side, body) {
     ph.querySelector(".ph-body").textContent = body.photo.i;
     ph.querySelector(".ph-cap").textContent = body.photo.c;
     stack.appendChild(ph);
+  } else if (body.link) {
+    const b = document.createElement("div");
+    b.className = "bub";
+    b.innerHTML = `<a class="url"></a><div class="card">` +
+                  `<div class="card-t"></div><div class="card-d"></div>` +
+                  `<div class="card-u"></div></div>`;
+    b.querySelector(".url").textContent = body.link.url;
+    b.querySelector(".card-t").textContent = body.link.t;
+    b.querySelector(".card-d").textContent = body.link.d;
+    b.querySelector(".card-u").textContent = body.link.url.replace(/^https?:\/\//, "").split("/")[0];
+    stack.appendChild(b);
   } else {
     const b = document.createElement("div");
     b.className = "bub" + (grouped ? " cont" : "");
@@ -178,6 +193,20 @@ async function botSay(msgs, quote) {
       tick(1);
       addRow("in", { photo: m.photo });
       S.botMsgs++;
+    } else if (m.link) {
+      await wait(1600);
+      tick(1);
+      addRow("in", { link: m.link });
+      S.botMsgs++;
+    } else if (m.unsend) {
+      /* 言いすぎたやつを自分で消す。本人が本当によくやる */
+      await readPause(m.unsend.length);
+      tick(1);
+      const row = addRow("in", { text: m.unsend });
+      S.botMsgs++;
+      await wait(2600);
+      row.replaceWith(sysEl(NAME + "がメッセージの送信を取り消しました"));
+      scroll();
     } else if (m.sys) {
       await wait(900);
       addSys(m.sys);

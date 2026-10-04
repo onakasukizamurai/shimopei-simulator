@@ -127,6 +127,13 @@ body{
 .in .bub.cont::before{display:none}
 .bub b{font-weight:700}
 
+/* リンクとプレビューカード */
+.url{display:block;color:#1a73c7;text-decoration:underline;word-break:break-all}
+.card{margin:8px -4px -2px;border:1px solid #e2e6ec;border-radius:9px;overflow:hidden;background:#fff}
+.card-t{padding:7px 9px 0;font-size:12.5px;font-weight:700;line-height:1.4}
+.card-d{padding:2px 9px 0;font-size:11.5px;line-height:1.4;color:#737d8a}
+.card-u{padding:4px 9px 7px;font-size:10.5px;color:#9aa3ae}
+
 /* 引用返信 */
 .quote{display:flex;gap:6px;align-items:flex-start;margin:-1px -4px 8px;
   padding:7px 9px;border-radius:11px;background:#f0f2f6}
