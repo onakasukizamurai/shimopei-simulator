@@ -4,6 +4,8 @@
 
 const NAME = "しもへい。";
 const AVATAR = "assets/shimohei.png";
+const MEMBERS = 9;                // グループの人数（自分を含む）
+const IDLE_SUB = `メンバー${MEMBERS}人`;
 const START_MIN = 23 * 60 + 47;   // 土曜 23:47
 const WAKE_MIN = 5 * 60 + 30;     // 朝練6時集合 − 準備30分
 const NAG_DELAY = 15000;
@@ -119,7 +121,7 @@ function addRow(side, body) {
 
   const meta = document.createElement("div");
   meta.className = "meta";
-  if (side === "out") meta.innerHTML = `<span class="read" hidden>既読</span>`;
+  if (side === "out") meta.innerHTML = `<span class="read" hidden></span>`;
   const t = document.createElement("span");
   t.textContent = fmtClock(S.clock);
   meta.appendChild(t);
@@ -131,14 +133,19 @@ function addRow(side, body) {
   return row;
 }
 
+/* グループなので既読は人数表示。夜が進むほど見ている人が増える */
 function markRead() {
-  chat.querySelectorAll(".row.out .read[hidden]").forEach((e) => (e.hidden = false));
+  const seen = Math.min(MEMBERS - 1, 1 + Math.floor(S.turns * 0.9));
+  chat.querySelectorAll(".row.out .read[hidden]").forEach((e) => {
+    e.textContent = "既読 " + seen;
+    e.hidden = false;
+  });
 }
 
 function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 async function showTyping(ms) {
-  $("hdrSub").textContent = "入力中…";
+  $("hdrSub").textContent = NAME + "が入力中…";
   $("hdrSub").classList.add("typing");
   const row = document.createElement("div");
   row.className = "row in typing";
@@ -148,7 +155,7 @@ async function showTyping(ms) {
   scroll();
   await wait(ms);
   row.remove();
-  $("hdrSub").textContent = "オンライン";
+  $("hdrSub").textContent = IDLE_SUB;
   $("hdrSub").classList.remove("typing");
 }
 
@@ -198,9 +205,7 @@ function showChoices(choices) {
   choices.forEach((c) => {
     const b = document.createElement("button");
     b.className = "qbtn";
-    b.innerHTML = `<span class="tag"></span>`;
-    b.querySelector(".tag").textContent = c.tag;
-    b.appendChild(document.createTextNode(c.t));
+    b.textContent = c.t;
     b.onclick = () => answer(c);
     quick.appendChild(b);
   });
@@ -422,7 +427,7 @@ function begin() {
   $("copyMsg").textContent = "";
   paintHud();
   addDayPill("今日");
-  addSys("しもへい。があなたの反省文を開きました");
+  addSys("しもへい。がノート「反省文_v12」を開きました");
   setInputEnabled(false);
   nextPhase();
 }
