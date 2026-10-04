@@ -150,8 +150,9 @@ function readPause(len) { return wait(Math.min(3000, 1000 + len * 65)); }
 async function botSay(msgs) {
   markRead();
   for (const m of msgs) {
+    const instant = S.botMsgs === 0;   // ゲーム最初の1通は待たせずに出す
     if (typeof m === "string") {
-      await readPause(m.length);
+      if (!instant) await readPause(m.length);
       tick(1);
       addRow("in", { text: m });
       S.botMsgs++;
@@ -294,7 +295,7 @@ async function nextPhase() {
   S.busy = true;
   const phase = DATA.phases[S.phase];
   const card = pick(phase.cards);
-  await wait(1200);
+  if (S.botMsgs > 0) await wait(1200);
   await botSay(card.msgs);
   S.busy = false;
   if (checkOver()) return;
