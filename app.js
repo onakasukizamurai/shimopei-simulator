@@ -29,7 +29,7 @@ let S;
 function reset() {
   S = {
     mental: 100, trust: 50, clock: START_MIN,
-    phase: 0, used: [], turns: 0, botMsgs: 0,
+    phase: 0, topic: pick(DATA.topics), used: [], turns: 0, botMsgs: 0,
     types: {}, nagLevel: 0, nagTimer: null,
     lastSide: null, busy: false, over: false
   };
@@ -166,6 +166,14 @@ function markRead() {
   });
 }
 
+function fillTopic(text) {
+  const t = DATA.topicMeta[S.topic] || DATA.topicMeta.tactics;
+  return String(text)
+    .replaceAll("{THING}", t.thing)
+    .replaceAll("{EVENT}", t.event)
+    .replaceAll("{FILE}", t.file);
+}
+
 function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 /* LINEに入力中表示は無いので、読む間だけ空ける */
@@ -180,7 +188,7 @@ async function botSay(msgs, quote) {
     if (typeof m === "string") {
       if (!instant) await readPause(m.length);
       tick(1);
-      addRow("in", { text: m, quote });
+      addRow("in", { text: fillTopic(m), quote });
       quote = null;
       S.botMsgs++;
     } else if (m.s) {
@@ -202,14 +210,14 @@ async function botSay(msgs, quote) {
       /* 言いすぎたやつを自分で消す。本人が本当によくやる */
       await readPause(m.unsend.length);
       tick(1);
-      const row = addRow("in", { text: m.unsend });
+      const row = addRow("in", { text: fillTopic(m.unsend) });
       S.botMsgs++;
       await wait(2600);
       row.replaceWith(sysEl(NAME + "がメッセージの送信を取り消しました"));
       scroll();
     } else if (m.sys) {
       await wait(900);
-      addSys(m.sys);
+      addSys(fillTopic(m.sys));
     }
     await wait(450);
   }
@@ -336,7 +344,8 @@ async function answer(choice) {
 async function nextPhase() {
   S.busy = true;
   const phase = DATA.phases[S.phase];
-  const card = pick(phase.cards);
+  const pool = phase.cards.filter((c) => !c.topic || c.topic === S.topic);
+  const card = pick(pool.length ? pool : phase.cards);
   if (S.botMsgs > 0) await wait(1200);
   await botSay(card.msgs);
   S.busy = false;
@@ -379,9 +388,9 @@ function incomingCall() {
       paintHud();
       addSys("不在着信：しもへい。");
       await botSay(pick([
-        ["出ないんだ😅", "まあいいよ。文字で続けよう"],
-        ["ワンコールで切ったね?", "見てたよ、ちゃんと🤔"],
-        ["電話、苦手なんだな。", "最近の子はそうだよな。\nわかったわかった👍"]
+        ["出ないんだ", "まあいいよ。文字で続けよう"],
+        ["ワンコールで切ったね?", "見てたよ、ちゃんと"],
+        ["電話、苦手なんだな。", "最近の子はそうだよね。\nわかったわかった"]
       ]));
       S.busy = false;
       if (checkOver()) return;
