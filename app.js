@@ -227,7 +227,8 @@ function toast(text) {
 /* ---------- 返信候補 ---------- */
 function showChoices(choices) {
   quick.innerHTML = `<div class="quick-hint">返信候補をタップ、または自由に入力</div>`;
-  choices.forEach((c) => {
+  const extra = (DATA.stockChoices || []).filter((s) => !choices.some((c) => c.t === s.t));
+  choices.concat(extra).forEach((c) => {
     const b = document.createElement("button");
     b.className = "qbtn";
     b.textContent = c.t;
@@ -296,6 +297,13 @@ function submitFree() {
   if (/^(寝ます|おやすみ|もう寝る|寝る)/.test(text)) {
     stopNag(); hideChoices(); meSay(text);
     return finish("sleep");
+  }
+  const apology = /^(すみません|すいません|すまん|ごめんなさい|ごめん|申し訳ありません|申し訳ない)/.test(text);
+  const ack = /^(わかりました|分かりました|了解です|了解しました|承知しました|了解)/.test(text);
+  if (apology || ack) {
+    const stock = DATA.stockChoices.find((s) => apology ? s.t === "すみません" : s.t === "わかりました");
+    answer({ t: text, type: stock.type, m: stock.m, tr: stock.tr, reply: stock.reply, free: true });
+    return;
   }
   const type = classify(text);
   answer({ t: text, type, m: BASE[type].m, tr: BASE[type].tr, free: true });
