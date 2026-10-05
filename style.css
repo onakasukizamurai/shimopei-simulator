@@ -120,7 +120,7 @@ body{
 }
 .in .bub{background:var(--bubble-in);color:var(--ink);border-top-left-radius:5px}
 .in .bub.cont{border-top-left-radius:var(--radius)}
-.out .bub{background:var(--bubble-out);color:#fff;border-top-right-radius:5px}
+.out .bub{background:var(--bubble-out);color:#111;border-top-right-radius:5px}
 .out .bub.cont{border-top-right-radius:var(--radius)}
 .in .bub::before{content:"";position:absolute;left:-5px;top:0;width:10px;height:14px;
   background:var(--bubble-in);clip-path:path("M10 0 L10 14 Q0 10 1 0 Z")}
