@@ -267,6 +267,7 @@ async function doNag() {
   $("phone").classList.add("shake");
   setTimeout(() => $("phone").classList.remove("shake"), 420);
   S.mental += nag.mental;
+  S.trust += nag.trust || 0;
   paintHud();
   await botSay(nag.msgs);
   S.busy = false;
@@ -300,6 +301,17 @@ function submitFree() {
   answer({ t: text, type, m: BASE[type].m, tr: BASE[type].tr, free: true });
 }
 
+/* 詰めは毎回削れる。良い返事でもメンタルは落ち、信頼はほとんど戻らない */
+function pressure(m, tr) {
+  const mental = m - 5;
+  let trust;
+  if (tr >= 10) trust = 0;
+  else if (tr >= 7) trust = -1;
+  else if (tr >= 0) trust = -4;
+  else trust = Math.round(tr * 2);
+  return { m: mental, tr: trust };
+}
+
 /* ---------- 1ターン ---------- */
 async function answer(choice) {
   if (S.busy) return;
@@ -310,8 +322,9 @@ async function answer(choice) {
   meSay(choice.t);
   S.turns++;
   S.types[choice.type] = (S.types[choice.type] || 0) + 1;
-  S.mental += choice.m;
-  S.trust  += choice.tr;
+  const hit = pressure(choice.m, choice.tr);
+  S.mental += hit.m;
+  S.trust  += hit.tr;
   S.nagLevel = Math.max(0, S.nagLevel - 1);
   tick(2);
   paintHud();
@@ -324,7 +337,7 @@ async function answer(choice) {
   if (choice.forceCall) { incomingCall(); return; }
 
   S.phase++;
-  if (S.phase >= DATA.phases.length) return finish(S.trust >= 85 ? "legend" : "survive");
+  if (S.phase >= DATA.phases.length) return finish(S.trust >= 42 && S.mental >= 28 ? "legend" : "survive");
   nextPhase();
 }
 
@@ -370,8 +383,8 @@ function incomingCall() {
     if (accepted) return finish("call");
     (async () => {
       S.busy = true;
-      S.mental -= 10;
-      S.trust  -= 6;
+      S.mental -= 16;
+      S.trust  -= 12;
       paintHud();
       addSys("不在着信：しもへい。");
       await botSay(pick([
@@ -382,7 +395,7 @@ function incomingCall() {
       S.busy = false;
       if (checkOver()) return;
       S.phase++;
-      if (S.phase >= DATA.phases.length) return finish(S.trust >= 85 ? "legend" : "survive");
+      if (S.phase >= DATA.phases.length) return finish(S.trust >= 42 && S.mental >= 28 ? "legend" : "survive");
       nextPhase();
     })();
   }
@@ -394,7 +407,7 @@ function incomingCall() {
 /* ---------- 結果 ---------- */
 function grade() {
   const score = S.mental * 0.5 + S.trust * 0.5;
-  return score >= 80 ? "S" : score >= 65 ? "A" : score >= 50 ? "B" : score >= 35 ? "C" : "D";
+  return score >= 78 ? "S" : score >= 62 ? "A" : score >= 40 ? "B" : score >= 28 ? "C" : "D";
 }
 
 function dominantType() {
@@ -429,11 +442,6 @@ async function finish(key) {
   $("end").hidden = false;
 
   const url = location.href.split("#")[0];
-  const text = `しもぺいシミュレーター：判定【${rank}】「${e.title}」\nメンタル${Math.round(S.mental)} / 信頼${Math.round(S.trust)}／${style}\nあなたもやってみて`;
-  $("btnShareX").onclick = () =>
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
-  $("btnShareLine").onclick = () =>
-    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, "_blank");
   $("btnCopy").onclick = async () => {
     try {
       await navigator.clipboard.writeText(url);
