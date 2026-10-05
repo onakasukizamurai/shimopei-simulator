@@ -128,16 +128,6 @@ function addRow(side, body) {
   } else {
     const b = document.createElement("div");
     b.className = "bub" + (grouped ? " cont" : "");
-    if (body.quote) {
-      const q = document.createElement("div");
-      q.className = "quote";
-      q.innerHTML = `<i class="quote-av"></i><div class="quote-body">` +
-                    `<span class="quote-name"></span><span class="quote-text"></span></div>`;
-      q.querySelector(".quote-name").textContent = body.quote.name;
-      q.querySelector(".quote-text").textContent =
-        body.quote.text.length > 24 ? body.quote.text.slice(0, 24) + "…" : body.quote.text;
-      b.appendChild(q);
-    }
     b.appendChild(document.createTextNode(body.text));
     stack.appendChild(b);
   }
@@ -180,16 +170,14 @@ function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 function readPause(len) { return wait(Math.min(3000, 1000 + len * 65)); }
 
 /* しもへい。の連投 */
-/* quote を渡すと、1通目だけ相手の発言を引用して返す（本人がよくやる） */
-async function botSay(msgs, quote) {
+async function botSay(msgs) {
   markRead();
   for (const m of msgs) {
     const instant = S.botMsgs === 0;   // ゲーム最初の1通は待たせずに出す
     if (typeof m === "string") {
       if (!instant) await readPause(m.length);
       tick(1);
-      addRow("in", { text: fillTopic(m), quote });
-      quote = null;
+      addRow("in", { text: fillTopic(m) });
       S.botMsgs++;
     } else if (m.s) {
       await wait(1200);
@@ -329,8 +317,7 @@ async function answer(choice) {
   paintHud();
 
   await wait(900);
-  await botSay(choice.reply || pick(DATA.typeReply[choice.type]),
-               { name: "あなた", text: choice.t });
+  await botSay(choice.reply || pick(DATA.typeReply[choice.type]));
   S.busy = false;
 
   if (checkOver()) return;
