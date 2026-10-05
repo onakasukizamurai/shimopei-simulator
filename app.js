@@ -227,8 +227,7 @@ function toast(text) {
 /* ---------- 返信候補 ---------- */
 function showChoices(choices) {
   quick.innerHTML = `<div class="quick-hint">返信候補をタップ、または自由に入力</div>`;
-  const extra = (DATA.stockChoices || []).filter((s) => !choices.some((c) => c.t === s.t));
-  choices.concat(extra).forEach((c) => {
+  choices.forEach((c) => {
     const b = document.createElement("button");
     b.className = "qbtn";
     b.textContent = c.t;
