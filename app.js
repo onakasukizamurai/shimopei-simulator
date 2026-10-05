@@ -301,15 +301,14 @@ function submitFree() {
   answer({ t: text, type, m: BASE[type].m, tr: BASE[type].tr, free: true });
 }
 
-/* 詰めは毎回削れる。良い返事でもメンタルは落ち、信頼はほとんど戻らない */
+/* 良い返事はメンタルも信頼も上がる。悪い返事は両方まとめて落ちる */
 function pressure(m, tr) {
-  const mental = m - 5;
-  let trust;
-  if (tr >= 10) trust = 0;
-  else if (tr >= 7) trust = -1;
-  else if (tr >= 0) trust = -4;
-  else trust = Math.round(tr * 2);
-  return { m: mental, tr: trust };
+  if (tr >= 7) return { m: 6, tr: Math.max(8, tr) };
+  if (tr > 0) return { m: 3, tr: Math.max(4, tr) };
+  return {
+    m: Math.min(-14, m * 2),
+    tr: Math.min(-12, tr * 2)
+  };
 }
 
 /* ---------- 1ターン ---------- */
@@ -337,7 +336,7 @@ async function answer(choice) {
   if (choice.forceCall) { incomingCall(); return; }
 
   S.phase++;
-  if (S.phase >= DATA.phases.length) return finish(S.trust >= 42 && S.mental >= 28 ? "legend" : "survive");
+  if (S.phase >= DATA.phases.length) return finish(S.trust >= 85 ? "legend" : "survive");
   nextPhase();
 }
 
@@ -395,7 +394,7 @@ function incomingCall() {
       S.busy = false;
       if (checkOver()) return;
       S.phase++;
-      if (S.phase >= DATA.phases.length) return finish(S.trust >= 42 && S.mental >= 28 ? "legend" : "survive");
+      if (S.phase >= DATA.phases.length) return finish(S.trust >= 85 ? "legend" : "survive");
       nextPhase();
     })();
   }
