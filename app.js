@@ -6,7 +6,7 @@ const NAME = "しもへい。";
 const AVATAR = "assets/shimohei.png";
 const MEMBERS = 9;                // グループの人数（自分を含む）
 const START_MIN = 23 * 60 + 47;   // 土曜 23:47
-const WAKE_MIN = 5 * 60 + 30;     // 朝練6時集合 − 準備30分
+const WAKE_MIN = 5 * 60 + 30;     // 夜が明けるまで。練習は夜なので朝集合はない
 const NAG_DELAY = 26000;
 
 const $ = (id) => document.getElementById(id);
