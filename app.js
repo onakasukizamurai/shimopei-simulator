@@ -388,9 +388,9 @@ function incomingCall() {
       paintHud();
       addSys("不在着信：しもへい。");
       await botSay(pick([
-        ["出ないんだね。", "いいよ。文字で続けよう。"],
-        ["ワンコールで切ったね。", "見てたよ。"],
-        ["電話が無理なら、文字でいいです。", "ただ、返事はしてください。"]
+        ["ここでやりとりしても仕方ないから他でやろう。日曜の夜でこれから寝る人も多いだろうし"],
+        ["最初はみみだけでもいいです"],
+        ["この場はまおち、もりほ、あおい、クラ、俺で話しましょう。"]
       ]));
       S.busy = false;
       if (checkOver()) return;
@@ -442,7 +442,7 @@ async function finish(key) {
   $("end").hidden = false;
 
   const url = location.href.split("#")[0];
-  const text = `しもぺいシミュレーター：判定【${rank}】「${e.title}」\nメンタル${Math.round(S.mental)} / 信頼${Math.round(S.trust)}／${style}\nお前もやってみろ`;
+  const text = `しもぺいシミュレーター：判定【${rank}】「${e.title}」\nメンタル${Math.round(S.mental)} / 信頼${Math.round(S.trust)}／${style}\nあなたもやってみて`;
   $("btnShareX").onclick = () =>
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
   $("btnShareLine").onclick = () =>
