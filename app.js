@@ -273,6 +273,9 @@ function pumpNotice() {
   $("push").classList.toggle("is-line", n.app === "LINE");
   $("push").hidden = false;
   $("push").onclick = null;
+  $("push").style.animation = "none";
+  void $("push").offsetWidth;
+  $("push").style.animation = "";
   if (n.mental) {
     S.mental += n.mental;
     paintHud();
@@ -281,8 +284,11 @@ function pumpNotice() {
   noticeTimer = setTimeout(() => {
     if (gen !== noticeGen) return;
     $("push").hidden = true;
-    noticeTimer = null;
-    pumpNotice();
+    noticeTimer = setTimeout(() => {
+      if (gen !== noticeGen) return;
+      noticeTimer = null;
+      pumpNotice();
+    }, 1200);
   }, 6000);
 }
 
