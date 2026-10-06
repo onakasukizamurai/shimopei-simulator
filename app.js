@@ -497,6 +497,8 @@ async function finish(key) {
   S.busy = true;
 
   const e = DATA.endings[key];
+  /* 1通目がさらに1分進むので、合わせて通話の2時間47分になる */
+  if (key === "call") tick(2 * 60 + 46);
   if (e.msgs) { await wait(500); await botSay(e.msgs); }
   await wait(key === "call" ? 3000 : 900);
 
