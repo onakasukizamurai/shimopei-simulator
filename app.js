@@ -253,23 +253,21 @@ function cancelNotice() {
 }
 function armNotice(n) {
   const gen = ++noticeGen;
-  setTimeout(() => {
-    if (S.over || gen !== noticeGen) return;
-    $("pushApp").textContent = n.app || "メール";
-    $("pushFrom").textContent = n.from || "";
-    $("pushBody").textContent = n.body || "";
-    $("push").classList.toggle("is-line", n.app === "LINE");
-    $("push").hidden = false;
-    $("push").onclick = () => { if (gen === noticeGen) cancelNotice(); };
-    $("phone").classList.add("shake");
-    setTimeout(() => $("phone").classList.remove("shake"), 420);
-    if (n.mental) {
-      S.mental += n.mental;
-      paintHud();
-      checkOver();
-    }
-    setTimeout(() => { if (gen === noticeGen) cancelNotice(); }, 14000);
-  }, 1800);
+  if (S.over) return;
+  $("pushApp").textContent = n.app || "メール";
+  $("pushFrom").textContent = n.from || "";
+  $("pushBody").textContent = n.body || "";
+  $("push").classList.toggle("is-line", n.app === "LINE");
+  $("push").hidden = false;
+  $("push").onclick = null;
+  $("phone").classList.add("shake");
+  setTimeout(() => $("phone").classList.remove("shake"), 420);
+  if (n.mental) {
+    S.mental += n.mental;
+    paintHud();
+    checkOver();
+  }
+  setTimeout(() => { if (gen === noticeGen) cancelNotice(); }, 6000);
 }
 
 function setInputEnabled(on) {
@@ -350,7 +348,6 @@ async function answer(choice) {
   if (S.busy) return;
   S.busy = true;
   stopNag();
-  cancelNotice();
   hideChoices();
 
   meSay(choice.t);
