@@ -258,6 +258,7 @@ function armNotice(n) {
     $("pushApp").textContent = n.app || "メール";
     $("pushFrom").textContent = n.from || "";
     $("pushBody").textContent = n.body || "";
+    $("push").classList.toggle("is-line", n.app === "LINE");
     $("push").hidden = false;
     $("push").onclick = () => { if (gen === noticeGen) cancelNotice(); };
     $("phone").classList.add("shake");
