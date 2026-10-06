@@ -13,7 +13,7 @@
 <meta property="og:image" content="https://onakasukizamurai.github.io/shimopei-simulator/assets/shimohei.png">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%2306C755'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle'%3E%F0%9F%8F%92%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=29">
+<link rel="stylesheet" href="style.css?v=30">
 </head>
 <body>
 
@@ -43,6 +43,16 @@
         <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
     </header>
+
+    <button class="push" id="push" hidden type="button">
+      <span class="push-top">
+        <svg class="push-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span id="pushApp">メール</span>
+        <span class="push-time">今</span>
+      </span>
+      <span class="push-from" id="pushFrom">教授</span>
+      <span class="push-body" id="pushBody"></span>
+    </button>
 
     <div class="hud" id="hud">
       <div class="hud-item">
@@ -143,7 +153,7 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="data.js?v=37"></script>
-<script src="app.js?v=32"></script>
+<script src="data.js?v=38"></script>
+<script src="app.js?v=33"></script>
 </body>
 </html>

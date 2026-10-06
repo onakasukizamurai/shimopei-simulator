@@ -246,6 +246,31 @@ function hideChoices() {
   setInputEnabled(false);
 }
 
+let noticeGen = 0;
+function cancelNotice() {
+  noticeGen++;
+  $("push").hidden = true;
+}
+function armNotice(n) {
+  const gen = ++noticeGen;
+  setTimeout(() => {
+    if (S.over || gen !== noticeGen) return;
+    $("pushApp").textContent = n.app || "メール";
+    $("pushFrom").textContent = n.from || "";
+    $("pushBody").textContent = n.body || "";
+    $("push").hidden = false;
+    $("push").onclick = () => { if (gen === noticeGen) cancelNotice(); };
+    $("phone").classList.add("shake");
+    setTimeout(() => $("phone").classList.remove("shake"), 420);
+    if (n.mental) {
+      S.mental += n.mental;
+      paintHud();
+      checkOver();
+    }
+    setTimeout(() => { if (gen === noticeGen) cancelNotice(); }, 5600);
+  }, 1800);
+}
+
 function setInputEnabled(on) {
   input.disabled = !on;
   $("btnSend").disabled = !on;
@@ -324,6 +349,7 @@ async function answer(choice) {
   if (S.busy) return;
   S.busy = true;
   stopNag();
+  cancelNotice();
   hideChoices();
 
   meSay(choice.t);
@@ -365,6 +391,7 @@ async function nextPhase() {
   if (checkOver()) return;
   if (card.forceCall) { incomingCall({ scripted: true }); return; }
   showChoices(card.choices);
+  if (card.notice) armNotice(card.notice);
 }
 
 function checkOver() {
@@ -379,6 +406,7 @@ function checkOver() {
 async function incomingCall(opts) {
   const scripted = !!(opts && opts.scripted);
   stopNag();
+  cancelNotice();
   hideChoices();
   S.busy = true;
   await wait(CALL_READ_MS);
@@ -446,6 +474,7 @@ async function finish(key) {
   if (S.over) return;
   S.over = true;
   stopNag();
+  cancelNotice();
   hideChoices();
   S.busy = true;
 
@@ -480,10 +509,12 @@ async function finish(key) {
 
 /* ---------- 起動 ---------- */
 function begin() {
+  cancelNotice();
   reset();
   chat.innerHTML = "";
   $("end").hidden = true;
   $("call").hidden = true;
+  $("push").hidden = true;
   $("copyMsg").textContent = "";
   paintHud();
   addDayPill("今日");
