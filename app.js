@@ -8,6 +8,7 @@ const MEMBERS = 9;                // グループの人数（自分を含む）
 const START_MIN = 23 * 60 + 47;   // 土曜 23:47
 const WAKE_MIN = 5 * 60 + 30;     // 夜が明けるまで。練習は夜なので朝集合はない
 const NAG_DELAY = 26000;
+const CALL_READ_MS = 4000;   // 直前の文を読んでから着信画面を出す
 
 const $ = (id) => document.getElementById(id);
 const chat = $("chat"), quick = $("quick"), input = $("input");
@@ -375,10 +376,14 @@ function checkOver() {
 }
 
 /* ---------- 着信 ---------- */
-function incomingCall(opts) {
+async function incomingCall(opts) {
   const scripted = !!(opts && opts.scripted);
   stopNag();
   hideChoices();
+  S.busy = true;
+  await wait(CALL_READ_MS);
+  if (S.over) return;
+  S.busy = false;
   const ov = $("call");
   ov.hidden = false;
   $("callState").textContent = "着信中…";
@@ -394,7 +399,12 @@ function incomingCall(opts) {
     ov.hidden = true;
     $("callAccept").onclick = null;
     $("callDecline").onclick = null;
-    if (accepted) return finish("call");
+    if (accepted) {
+      S.mental = Math.max(0, S.mental - 40);
+      S.trust = Math.min(100, S.trust + 35);
+      paintHud();
+      return finish("call");
+    }
     (async () => {
       S.busy = true;
       S.mental -= scripted ? 8 : 16;
