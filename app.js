@@ -168,7 +168,7 @@ function fillTopic(text) {
 function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 /* LINEに入力中表示は無いので、読む間だけ空ける */
-function readPause(len) { return wait(Math.min(3000, 1000 + len * 65)); }
+function readPause(len) { return wait(Math.min(2000, 700 + len * 40)); }
 
 /* しもへい。の連投 */
 async function botSay(msgs) {
@@ -208,7 +208,7 @@ async function botSay(msgs) {
       await wait(900);
       addSys(fillTopic(m.sys));
     }
-    await wait(450);
+    await wait(250);
   }
 }
 
