@@ -267,7 +267,7 @@ function armNotice(n) {
       paintHud();
       checkOver();
     }
-    setTimeout(() => { if (gen === noticeGen) cancelNotice(); }, 5600);
+    setTimeout(() => { if (gen === noticeGen) cancelNotice(); }, 14000);
   }, 1800);
 }
 
