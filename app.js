@@ -498,7 +498,7 @@ async function finish(key) {
 
   const e = DATA.endings[key];
   if (e.msgs) { await wait(500); await botSay(e.msgs); }
-  await wait(900);
+  await wait(key === "call" ? 4500 : 900);
 
   const elapsed = S.clock - START_MIN;
   const style = DATA.styles[dominantType()];
