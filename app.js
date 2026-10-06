@@ -351,11 +351,18 @@ async function nextPhase() {
   S.busy = true;
   const phase = DATA.phases[S.phase];
   const pool = phase.cards.filter((c) => !c.topic || c.topic === S.topic);
-  const card = pick(pool.length ? pool : phase.cards);
+  if (!pool.length) {
+    S.busy = false;
+    S.phase++;
+    if (S.phase >= DATA.phases.length) return finish(S.trust >= 85 ? "legend" : "survive");
+    return nextPhase();
+  }
+  const card = pick(pool);
   if (S.botMsgs > 0) await wait(1200);
   await botSay(card.msgs);
   S.busy = false;
   if (checkOver()) return;
+  if (card.forceCall) { incomingCall({ scripted: true }); return; }
   showChoices(card.choices);
 }
 
@@ -368,7 +375,8 @@ function checkOver() {
 }
 
 /* ---------- 着信 ---------- */
-function incomingCall() {
+function incomingCall(opts) {
+  const scripted = !!(opts && opts.scripted);
   stopNag();
   hideChoices();
   const ov = $("call");
@@ -389,15 +397,17 @@ function incomingCall() {
     if (accepted) return finish("call");
     (async () => {
       S.busy = true;
-      S.mental -= 16;
-      S.trust  -= 12;
+      S.mental -= scripted ? 8 : 16;
+      S.trust  -= scripted ? 6 : 12;
       paintHud();
       addSys("不在着信：しもへい。");
-      await botSay(pick([
-        ["ここでやりとりしても仕方ないから他でやろう。日曜の夜でこれから寝る人も多いだろうし"],
-        ["何にそんな時間かかるの？"],
-        ["なぜ止まってる？"]
-      ]));
+      if (!scripted) {
+        await botSay(pick([
+          ["ここでやりとりしても仕方ないから他でやろう。日曜の夜でこれから寝る人も多いだろうし"],
+          ["何にそんな時間かかるの？"],
+          ["なぜ止まってる？"]
+        ]));
+      }
       S.busy = false;
       if (checkOver()) return;
       S.phase++;

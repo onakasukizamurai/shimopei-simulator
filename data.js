@@ -197,6 +197,13 @@ DATA.phases = [
     ] }
 ] },
 
+{ id:"call", cards: [
+  { topic:"tactics", forceCall: true, msgs: [
+      "文章で話しててもらちが明かない。",
+      "今どこにいる？"
+    ], choices: [] }
+] },
+
 { id:"when", cards: [
   { topic:"tactics", msgs: [
       "で、ここまでの話、いつまでに文章にする？",
