@@ -247,13 +247,25 @@ function hideChoices() {
 }
 
 let noticeGen = 0;
-let noticeWave = 0;
+let noticeQueue = [];
+let noticeTimer = null;
 function cancelNotice() {
-  noticeWave++;
   noticeGen++;
+  noticeQueue = [];
+  if (noticeTimer) clearTimeout(noticeTimer);
+  noticeTimer = null;
   $("push").hidden = true;
 }
-function showNotice(n) {
+function armNotice(n) {
+  noticeQueue.push(...(Array.isArray(n) ? n : [n]));
+  if (!noticeTimer) pumpNotice();
+}
+function pumpNotice() {
+  if (S.over || !noticeQueue.length) {
+    noticeTimer = null;
+    return;
+  }
+  const n = noticeQueue.shift();
   const gen = ++noticeGen;
   $("pushApp").textContent = n.app || "メール";
   $("pushFrom").textContent = n.from || "";
@@ -264,21 +276,14 @@ function showNotice(n) {
   if (n.mental) {
     S.mental += n.mental;
     paintHud();
-    checkOver();
+    if (checkOver()) return;
   }
-  setTimeout(() => {
-    if (gen === noticeGen) $("push").hidden = true;
+  noticeTimer = setTimeout(() => {
+    if (gen !== noticeGen) return;
+    $("push").hidden = true;
+    noticeTimer = null;
+    pumpNotice();
   }, 6000);
-}
-function armNotice(n) {
-  const list = Array.isArray(n) ? n : [n];
-  const wave = ++noticeWave;
-  const step = (i) => {
-    if (S.over || wave !== noticeWave || i >= list.length) return;
-    showNotice(list[i]);
-    if (i + 1 < list.length) setTimeout(() => step(i + 1), 6000);
-  };
-  step(0);
 }
 
 function setInputEnabled(on) {
