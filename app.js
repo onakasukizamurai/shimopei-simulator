@@ -247,27 +247,38 @@ function hideChoices() {
 }
 
 let noticeGen = 0;
+let noticeWave = 0;
 function cancelNotice() {
+  noticeWave++;
   noticeGen++;
   $("push").hidden = true;
 }
-function armNotice(n) {
+function showNotice(n) {
   const gen = ++noticeGen;
-  if (S.over) return;
   $("pushApp").textContent = n.app || "メール";
   $("pushFrom").textContent = n.from || "";
   $("pushBody").textContent = n.body || "";
   $("push").classList.toggle("is-line", n.app === "LINE");
   $("push").hidden = false;
   $("push").onclick = null;
-  $("phone").classList.add("shake");
-  setTimeout(() => $("phone").classList.remove("shake"), 420);
   if (n.mental) {
     S.mental += n.mental;
     paintHud();
     checkOver();
   }
-  setTimeout(() => { if (gen === noticeGen) cancelNotice(); }, 6000);
+  setTimeout(() => {
+    if (gen === noticeGen) $("push").hidden = true;
+  }, 6000);
+}
+function armNotice(n) {
+  const list = Array.isArray(n) ? n : [n];
+  const wave = ++noticeWave;
+  const step = (i) => {
+    if (S.over || wave !== noticeWave || i >= list.length) return;
+    showNotice(list[i]);
+    if (i + 1 < list.length) setTimeout(() => step(i + 1), 6000);
+  };
+  step(0);
 }
 
 function setInputEnabled(on) {
@@ -289,8 +300,6 @@ async function doNag() {
   const nag = DATA.nags[Math.min(S.nagLevel, DATA.nags.length - 1)];
   S.nagLevel++;
   S.busy = true;
-  $("phone").classList.add("shake");
-  setTimeout(() => $("phone").classList.remove("shake"), 420);
   S.mental += nag.mental;
   S.trust += nag.trust || 0;
   paintHud();
